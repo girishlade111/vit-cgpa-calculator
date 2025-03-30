@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIT CGPA Calculator</title>
+    <style>
+        :root {
+            --primary-bg: #1e1e1e;
+            --secondary-bg: #2d2d2d;
+            --text-color: #ffffff;
+            --accent-color: #007bff;
+            --input-bg: #333333;
+            --card-bg: #252525;
+            --hover-color: #0056b3;
+            --border-radius: 8px;
+            --button-hover: #0069d9;
+        }
+
+        [data-theme="light"] {
+            --primary-bg: #f5f5f5;
+            --secondary-bg: #ffffff;
+            --text-color: #333333;
+            --accent-color: #007bff;
+            --input-bg: #ffffff;
+            --card-bg: #ffffff;
+            --hover-color: #0056b3;
+            --button-hover: #0069d9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            color: var(--accent-color);
+            letter-spacing: 1px;
+        }
+
+        .theme-toggle {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .theme-toggle select {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid #555;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .theme-toggle select:hover {
+            border-color: var(--accent-color);
+        }
+
+        .calculator-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.5em;
+            color: var(--text-color);
+        }
+
+        .course-row {
+            display: flex;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .course-input {
+            flex: 1;
+            padding: 12px 15px;
+            background-color: var(--input-bg);
+            border: 1px solid #555;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .course-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .course-input:hover {
+            border-color: var(--accent-color);
+        }
+
+        select.course-input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 30px;
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .add-course-btn {
+            background-color: #28a745;
+            padding: 10px 15px;
+            flex: 1;
+        }
+
+        .add-course-btn:hover {
+            background-color: #218838;
+        }
+
+        .remove-course-btn {
+            background-color: #dc3545;
+            padding: 10px 15px;
+            flex: 1;
+        }
+
+        .remove-course-btn:hover {
+            background-color: #c82333;
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--secondary-bg);
+            border-radius: var(--border-radius);
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-text {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .cgpa-display {
+            font-size: 3em;
+            font-weight: 700;
+            text-align: center;
+            color: var(--accent-color);
+            margin: 15px 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .course-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <h1>VIT CGPA CALCULATOR</h1>
+    
+    <div class="container">
+        <div class="theme-toggle">
+            <label for="theme">Theme</label>
+            <select id="theme" class="course-input">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+            </select>
+        </div>
+        
+        <h2 class="calculator-title">CALCULATE GPA</h2>
+        
+        <div id="courses-container">
+            <!-- Initial course rows will be added here -->
+        </div>
+        
+        <div class="controls">
+            <button class="add-course-btn" id="addCourse">Add Course</button>
+            <button class="remove-course-btn" id="removeCourse">Remove Course</button>
+        </div>
+        
+        <div class="action-row">
+            <button id="calculateBtn">Submit</button>
+        </div>
+        
+        <div class="results" id="results">
+            <div class="result-text">Your CGPA:</div>
+            <div class="cgpa-display" id="cgpaDisplay">0.00</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle
+            const themeSelect = document.getElementById('theme');
+            themeSelect.addEventListener('change', function() {
+                document.body.setAttribute('data-theme', this.value);
+            });
+            
+            const coursesContainer = document.getElementById('courses-container');
+            const addCourseBtn = document.getElementById('addCourse');
+            const removeCourseBtn = document.getElementById('removeCourse');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultsDiv = document.getElementById('results');
+            const cgpaDisplay = document.getElementById('cgpaDisplay');
+            
+            // Grade points mapping for VIT
+            const gradePoints = {
+                'S': 10,
+                'A': 9,
+                'B': 8,
+                'C': 7,
+                'D': 6,
+                'E': 5,
+                'F': 0
+            };
+            
+            // Credits options
+            const creditOptions = [1, 2, 3, 4, 5];
+            
+            // Initialize with 10 course rows (as shown in the image)
+            for (let i = 0; i < 10; i++) {
+                addCourseRow();
+            }
+            
+            // Add course row function
+            function addCourseRow() {
+                const courseRow = document.createElement('div');
+                courseRow.className = 'course-row';
+                
+                // Course input
+                const courseInput = document.createElement('input');
+                courseInput.type = 'text';
+                courseInput.className = 'course-input';
+                courseInput.placeholder = 'Course';
+                
+                // Grade select
+                const gradeSelect = document.createElement('select');
+                gradeSelect.className = 'course-input';
+                
+                // Add empty default option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Grade';
+                defaultOption.selected = true;
+                defaultOption.disabled = true;
+                gradeSelect.appendChild(defaultOption);
+                
+                // Add grade options
+                for (const grade in gradePoints) {
+                    const option = document.createElement('option');
+                    option.value = grade;
+                    option.textContent = grade;
+                    gradeSelect.appendChild(option);
+                }
+                
+                // Credit select
+                const creditSelect = document.createElement('select');
+                creditSelect.className = 'course-input';
+                
+                // Add empty default option
+                const defaultCreditOption = document.createElement('option');
+                defaultCreditOption.value = '';
+                defaultCreditOption.textContent = 'Credits';
+                defaultCreditOption.selected = true;
+                defaultCreditOption.disabled = true;
+                creditSelect.appendChild(defaultCreditOption);
+                
+                // Add credit options
+                creditOptions.forEach(credit => {
+                    const option = document.createElement('option');
+                    option.value = credit;
+                    option.textContent = credit;
+                    creditSelect.appendChild(option);
+                });
+                
+                // Append elements to row
+                courseRow.appendChild(courseInput);
+                courseRow.appendChild(gradeSelect);
+                courseRow.appendChild(creditSelect);
+                
+                // Append row to container
+                coursesContainer.appendChild(courseRow);
+            }
+            
+            // Add course event
+            addCourseBtn.addEventListener('click', addCourseRow);
+            
+            // Remove course event
+            removeCourseBtn.addEventListener('click', function() {
+                if (coursesContainer.children.length > 1) {
+                    coursesContainer.removeChild(coursesContainer.lastChild);
+                }
+            });
+            
+            // Calculate CGPA event
+            calculateBtn.addEventListener('click', function() {
+                let totalCredits = 0;
+                let totalGradePoints = 0;
+                let validCourses = 0;
+                
+                const courseRows = coursesContainer.querySelectorAll('.course-row');
+                
+                courseRows.forEach(row => {
+                    const gradeSelect = row.querySelector('select:nth-of-type(1)');
+                    const creditSelect = row.querySelector('select:nth-of-type(2)');
+                    
+                    if (gradeSelect.value && creditSelect.value) {
+                        const grade = gradeSelect.value;
+                        const credits = parseInt(creditSelect.value);
+                        
+                        totalGradePoints += gradePoints[grade] * credits;
+                        totalCredits += credits;
+                        validCourses++;
+                    }
+                });
+                
+                if (validCourses > 0) {
+                    const cgpa = totalGradePoints / totalCredits;
+                    cgpaDisplay.textContent = cgpa.toFixed(2);
+                    resultsDiv.classList.add('show');
+                    
+                    // Scroll to results
+                    resultsDiv.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('Please enter at least one course with grade and credits');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
